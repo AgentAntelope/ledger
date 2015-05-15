@@ -1,5 +1,4 @@
 require 'csv'
-require 'pry'
 
 class Ledger
   def self.from_csv(filepath:)
@@ -13,6 +12,8 @@ class Ledger
   end
 
   def account_total(account_holder:, date: Date.today)
+    # This guard is here to ensure that we respect that everyone, even account
+    # holders we don't know, start at 0.
     total_transactions(transactions: transactions[account_holder], date: date) || 0
   end
 
@@ -25,6 +26,7 @@ class Ledger
     @transactions ||= Hash.new([])
     raw_data.each do |date, from, to, amount|
       date = Date.parse(date)
+      # it would be nice to use Money here, but it's not really needed yet.
       amount = amount.to_f
       transactions[from] += [{amount: -amount, date: date}]
       transactions[to] += [{amount: amount, date: date}]
