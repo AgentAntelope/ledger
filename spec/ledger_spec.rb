@@ -66,6 +66,23 @@ describe Ledger do
           expect(subject.account_total(account_holder: account_holder)).to eq(25.00)
         end
       end
+
+      describe 'specifying a specific date' do
+        let(:date) { Date.parse('2015-01-16') }
+        context 'for an account holder with debits' do
+          let(:account_holder) {'john'}
+          it 'correctly calculates the total' do
+            expect(subject.account_total(account_holder: account_holder, date: date)).to eq(-125.00)
+          end
+        end
+
+        context 'for an account holder with credits' do
+          let(:account_holder) {'mary'}
+          it 'correctly calculates the total' do
+            expect(subject.account_total(account_holder: account_holder, date: date)).to eq(125.00)
+          end
+        end
+      end
     end
   end
 end
