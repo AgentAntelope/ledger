@@ -40,12 +40,6 @@ describe Ledger do
       let(:filepath) { 'spec/fixtures/simple_ledger.csv' }
       subject { described_class.from_csv(filepath: filepath) }
 
-      context 'for an account holder with no entries' do
-        it 'returns 0' do
-          expect(subject.account_total(account_holder: 'foo')).to eq(0)
-        end
-      end
-
       context 'for an account holder with debits' do
         let(:account_holder) {'john'}
         it 'correctly calculates the total' do
@@ -80,6 +74,57 @@ describe Ledger do
           let(:account_holder) {'mary'}
           it 'correctly calculates the total' do
             expect(subject.account_total(account_holder: account_holder, date: date)).to eq(125.00)
+          end
+        end
+      end
+    end
+
+    context 'for a ledger with un-ordered data' do
+      let(:filepath) { 'spec/fixtures/complex_ledger.csv' }
+      subject { described_class.from_csv(filepath: filepath) }
+
+      context 'for an account holder with debits' do
+        let(:account_holder) {'john'}
+        it 'correctly calculates the total' do
+          expect(subject.account_total(account_holder: account_holder)).to eq(0.00)
+        end
+      end
+
+      context 'for an account holder with credits' do
+        let(:account_holder) {'supermarket'}
+        it 'correctly calculates the total' do
+          expect(subject.account_total(account_holder: account_holder)).to eq(-110.00)
+        end
+      end
+
+      context 'for an account holder with credits and debits' do
+        let(:account_holder) {'mary'}
+        it 'correctly calculates the total' do
+          expect(subject.account_total(account_holder: account_holder)).to eq(10.00)
+        end
+      end
+
+      describe 'specifying a specific date' do
+        let(:date) { Date.parse('2015-01-15') }
+        context 'for an account holder with debits' do
+          let(:account_holder) {'supermarket'}
+          it 'correctly calculates the total' do
+            expect(subject.account_total(account_holder: account_holder, date: date)).to eq(-130.00)
+          end
+        end
+
+        context 'for an account holder with credits' do
+          let(:account_holder) {'john'}
+          it 'correctly calculates the total' do
+            expect(subject.account_total(account_holder: account_holder, date: date)).to eq(130.00)
+          end
+        end
+
+        context 'for an account holder with credits and debits' do
+        let(:date) { Date.parse('2015-01-17') }
+          let(:account_holder) {'john'}
+          it 'correctly calculates the total' do
+            expect(subject.account_total(account_holder: account_holder, date: date)).to eq(-15.00)
           end
         end
       end
