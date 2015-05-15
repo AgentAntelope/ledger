@@ -61,8 +61,25 @@ describe Ledger do
         end
       end
 
+      context 'application of funds' do
+        let(:account_holder) {'mary'}
+        context 'on the day of the transaction' do
+          let(:date) { Date.parse('2015-01-16') }
+          it 'does not take the funds' do
+            expect(subject.account_total(account_holder: account_holder, date: date)).to eq(0)
+          end
+        end
+
+        context 'on the day after the transaction' do
+          let(:date) { Date.parse('2015-01-17') }
+          it 'takes the funds' do
+            expect(subject.account_total(account_holder: account_holder, date: date)).to eq(125.00)
+          end
+        end
+      end
+
       describe 'specifying a specific date' do
-        let(:date) { Date.parse('2015-01-16') }
+        let(:date) { Date.parse('2015-01-17') }
         context 'for an account holder with debits' do
           let(:account_holder) {'john'}
           it 'correctly calculates the total' do
@@ -105,7 +122,7 @@ describe Ledger do
       end
 
       describe 'specifying a specific date' do
-        let(:date) { Date.parse('2015-01-15') }
+        let(:date) { Date.parse('2015-01-16') }
         context 'for an account holder with debits' do
           let(:account_holder) {'supermarket'}
           it 'correctly calculates the total' do
@@ -121,7 +138,7 @@ describe Ledger do
         end
 
         context 'for an account holder with credits and debits' do
-        let(:date) { Date.parse('2015-01-17') }
+        let(:date) { Date.parse('2015-01-18') }
           let(:account_holder) {'john'}
           it 'correctly calculates the total' do
             expect(subject.account_total(account_holder: account_holder, date: date)).to eq(-15.00)

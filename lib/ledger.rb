@@ -34,7 +34,7 @@ class Ledger
   end
 
   def total_transactions(transactions:, date:)
-    applicable_transactions = transactions.select{|t| t[:date] <= date}
+    applicable_transactions = transactions.select{|t| t[:date] < date}
     applicable_transactions.map {|t| t[:amount]}.inject(&:+)
   end
 end
