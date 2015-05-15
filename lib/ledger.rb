@@ -34,7 +34,16 @@ class Ledger
   end
 
   def total_transactions(transactions:, date:)
-    applicable_transactions = transactions.select{|t| t[:date] < date}
-    applicable_transactions.map {|t| t[:amount]}.inject(&:+)
+    transactions = applicable_transactions(transactions: transactions, date: date)
+
+    amounts = transactions.map {|t| t[:amount]}
+
+    amounts.inject(&:+)
+  end
+
+  def applicable_transactions(transactions:, date:)
+    transactions.select do |t|
+      t[:date] < date
+    end
   end
 end
